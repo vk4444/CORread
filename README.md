@@ -103,13 +103,17 @@ If you use CORread, please cite it (GitHub's "Cite this repository" button uses 
 
 ## Credits
 
-CORread was designed and written by **Vojtěch Kubala**. It grew out of a line of code that each step adapted from the one before:
+CORread was designed and developed by **Vojtěch Kubala**. It grew out of a line of code that each step adapted from the one before:
 
 1. **CORnet** by Jonas Kubilius, Martin Schrimpf and colleagues in the DiCarlo Lab at MIT ([dicarlolab/CORnet](https://github.com/dicarlolab/CORnet), GPL-3.0): the CORnet-Z and CORnet-S architectures.
 2. **Origins-of-VWFA** by Théo Hannagan, Aakash Agrawal, Laurent Cohen and Stanislas Dehaene ([THANNAGA/Origins-of-VWFA](https://github.com/THANNAGA/Origins-of-VWFA), GPL-3.0): the literacy training paradigm, the biased and unbiased readouts, and the original training code.
 3. **Dr. Olga Solaja**'s adaptation of the Origins-of-VWFA code, from which this library was developed.
 
 On that basis, CORread adds the reproducible stimulus pipeline, resumable and provenance-tracked training, CORnet-S support, family training, the word selectivity and lesion experiments, Hugging Face sharing and status reporting. [`NOTICE`](NOTICE) lists which files derive from which source.
+
+## AI usage disclosure
+
+Claude Code (Anthropic) was used to assist with the implementation of CORread and the writing of its documentation.
 
 ## License
 

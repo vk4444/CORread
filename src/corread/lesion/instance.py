@@ -113,9 +113,14 @@ class LesionInstance(TrainingInstance):
         Word selectivity, as for :meth:`word_selectivity`.
     batch_size, lr, momentum, weight_decay : optional
         By default the lesioned model's.
+    wrd_path : str, optional
+        The word set; by default the one the lesioned model was trained on.
+    seed, resume, report, models_dir, img_path, num_workers, gpus
+        As for :class:`~corread.training.TrainingInstance`.
 
-    The remaining parameters are as for :class:`~corread.training.TrainingInstance`. Hub export is
-    not available for lesion runs.
+    Notes
+    -----
+    Hub export is not available for lesion runs.
     """
 
     def __init__(
