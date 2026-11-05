@@ -1,0 +1,51 @@
+site_name: CORread
+site_description: Train CORnet models of the ventral visual stream to read, and study the word-selective units that emerge
+site_url: https://vk4444.github.io/CORread/
+repo_url: https://github.com/vk4444/CORread
+repo_name: vk4444/CORread
+copyright: Copyright &copy; 2026 Vojtěch Kubala · GPL-3.0-or-later
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.sections
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle: { icon: material/brightness-7, name: Dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle: { icon: material/brightness-4, name: Light mode }
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Stimuli: stimuli.md
+  - Training: training.md
+  - Lesions: lesions.md
+  - Sharing: hub.md
+  - Reporting API: reporting.md
+  - API reference: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: numpy
+            show_source: false
+            show_root_heading: true
+            heading_level: 3
+            members_order: source
+            show_signature_annotations: true
+            separate_signature: true
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc: { permalink: true }
+  - pymdownx.highlight
+  - pymdownx.superfences

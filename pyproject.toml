@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "corread"
+version = "0.1.0"
+description = "Train CORnet models of the ventral visual stream to read, and study the word-selective units that emerge"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Vojtěch Kubala" }]
+requires-python = ">=3.10"
+keywords = ["CORnet", "reading", "visual word form area", "VWFA", "literacy", "computational neuroscience",
+            "deep learning", "PyTorch"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "torch>=2.6",
+    "torchvision>=0.21",
+    "numpy>=1.24",
+    "pillow>=10.1",
+    "tqdm>=4.60",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+hub = ["huggingface_hub>=1.0"]
+imagenet = ["scipy>=1.10"]
+# pymdown-extensions 12 and MkDocs 2 break the mkdocstrings plugin
+docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5", "mkdocstrings[python]>=0.26", "pymdown-extensions<12"]
+dev = ["corread[hub,imagenet,docs]", "pytest>=8", "ruff>=0.6", "jsonschema>=4.20", "build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/vk4444/CORread"
+Documentation = "https://vk4444.github.io/CORread"
+Source = "https://github.com/vk4444/CORread"
+Issues = "https://github.com/vk4444/CORread/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+src = ["src", "tests"]
+# the code in the docs is laid out by hand
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "RUF"]
+# en dashes, × and ± in docstrings are deliberate; %-formatting is kept for fixed-width numbers, and
+# tuple concatenation and if-else blocks where they read more plainly
+ignore = ["RUF001", "RUF002", "RUF005", "SIM108", "UP031"]
+
+[tool.ruff.lint.per-file-ignores]
+# the area names V1, V2, V4 and IT follow the neuroscience
+"src/corread/models/*" = ["N815"]
+# tests read small files inline
+"tests/*" = ["SIM115"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning:torchvision.*"]

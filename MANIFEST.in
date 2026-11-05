@@ -1,0 +1,3 @@
+include CHANGELOG.md CITATION.cff NOTICE LICENSE
+graft tests
+global-exclude __pycache__ *.py[cod]

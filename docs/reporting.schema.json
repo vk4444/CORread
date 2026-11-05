@@ -1,0 +1,977 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vk4444/CORread/blob/main/docs/reporting.schema.json",
+  "title": "CORread status report",
+  "description": "Body of every POST the CORread library sends to a reporting API. Schema version 2. See docs/reporting.md for the meaning of each field.",
+  "type": "object",
+  "required": [
+    "schema",
+    "seq",
+    "sent_at",
+    "run_id",
+    "kind",
+    "name",
+    "group",
+    "host",
+    "event",
+    "status",
+    "started_at",
+    "finished_at",
+    "config",
+    "progress",
+    "eta_seconds",
+    "initial_validation",
+    "history",
+    "error"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": 2
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sent_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "run_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "kind": {
+      "enum": [
+        "training",
+        "lesion",
+        "wordset"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "group": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "host": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "event": {
+      "enum": [
+        "started",
+        "progress",
+        "epoch_end",
+        "complete",
+        "interrupted",
+        "failed",
+        "snapshot"
+      ]
+    },
+    "status": {
+      "enum": [
+        "in progress",
+        "complete",
+        "interrupted",
+        "discarded",
+        "failed",
+        "stopped"
+      ]
+    },
+    "started_at": {
+      "$ref": "#/$defs/nullableTimestamp"
+    },
+    "finished_at": {
+      "$ref": "#/$defs/nullableTimestamp"
+    },
+    "config": {
+      "type": "object"
+    },
+    "progress": {
+      "type": "object"
+    },
+    "eta_seconds": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "initial_validation": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "history": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "maxItems": 1000
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "message"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "maxLength": 255
+            },
+            "message": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "training"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "config": {
+            "$ref": "#/$defs/trainingConfig"
+          },
+          "progress": {
+            "$ref": "#/$defs/trainingProgress"
+          },
+          "initial_validation": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/$defs/initialValidation"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/epoch"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "lesion"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "config": {
+            "$ref": "#/$defs/lesionConfig"
+          },
+          "progress": {
+            "$ref": "#/$defs/lesionProgress"
+          },
+          "initial_validation": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/$defs/lesionInitialValidation"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/lesionEpoch"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "wordset"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "group": {
+            "const": "wordsets"
+          },
+          "config": {
+            "$ref": "#/$defs/wordsetConfig"
+          },
+          "progress": {
+            "$ref": "#/$defs/wordsetProgress"
+          },
+          "initial_validation": {
+            "type": "null"
+          },
+          "history": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "failed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "type": "object"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "error": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nullableTimestamp": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "format": "date-time"
+        }
+      ]
+    },
+    "nullableNumber": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "nullableInteger": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "nullableString": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fraction": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "nullablePercent": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "initialValidation": {
+      "type": "object",
+      "required": [
+        "val_loss",
+        "val_loss_images",
+        "val_loss_words",
+        "val_accuracy_images",
+        "val_accuracy_words",
+        "duration_seconds",
+        "finished_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "val_loss": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_images": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_words": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_accuracy_images": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "val_accuracy_words": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "duration_seconds": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "finished_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        }
+      }
+    },
+    "epoch": {
+      "type": "object",
+      "required": [
+        "epoch",
+        "lr",
+        "train_loss",
+        "train_loss_images",
+        "train_loss_words",
+        "train_accuracy_images",
+        "train_accuracy_words",
+        "val_loss",
+        "val_loss_images",
+        "val_loss_words",
+        "val_accuracy_images",
+        "val_accuracy_words",
+        "duration_seconds",
+        "finished_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lr": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_loss": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_loss_images": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_loss_words": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_accuracy_images": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "train_accuracy_words": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "val_loss": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_images": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_words": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_accuracy_images": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "val_accuracy_words": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "duration_seconds": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "finished_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        }
+      }
+    },
+    "trainingConfig": {
+      "type": "object",
+      "required": [
+        "mode",
+        "model_choice",
+        "model_class",
+        "parameters",
+        "outputs",
+        "pre_name",
+        "wordset",
+        "batch_size",
+        "lr",
+        "momentum",
+        "weight_decay",
+        "img_classes",
+        "wrd_classes",
+        "train_images",
+        "val_images",
+        "device_name",
+        "gpus_used"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "pre",
+            "illit",
+            "lit_bias",
+            "lit_no_bias"
+          ]
+        },
+        "model_choice": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "model_class": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "parameters": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "outputs": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "pre_name": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "wordset": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "batch_size": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "lr": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "momentum": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "weight_decay": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "img_classes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "wrd_classes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "train_images": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "val_images": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "device_name": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "gpus_used": {
+          "$ref": "#/$defs/nullableInteger"
+        }
+      }
+    },
+    "trainingProgress": {
+      "type": "object",
+      "required": [
+        "epochs_first",
+        "epochs_total",
+        "epochs_completed",
+        "epoch",
+        "phase",
+        "batch",
+        "batches",
+        "fraction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "epochs_first": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "epochs_total": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "epochs_completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "epoch": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "phase": {
+          "enum": [
+            "initial_validation",
+            "training",
+            "validation",
+            null
+          ]
+        },
+        "batch": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "batches": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "fraction": {
+          "$ref": "#/$defs/fraction"
+        }
+      }
+    },
+    "lesionConfig": {
+      "type": "object",
+      "required": [
+        "source_name",
+        "source_mode",
+        "model_choice",
+        "model_class",
+        "parameters",
+        "outputs",
+        "wordset",
+        "batch_size",
+        "lr",
+        "momentum",
+        "weight_decay",
+        "img_classes",
+        "wrd_classes",
+        "train_images",
+        "val_images",
+        "device_name",
+        "gpus_used",
+        "units_total",
+        "lesioned_units",
+        "word_channel",
+        "reset_outgoing",
+        "selectivity_threshold",
+        "selectivity_images",
+        "selectivity_words",
+        "silent_epochs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "source_mode": {
+          "enum": [
+            "lit_bias",
+            "lit_no_bias"
+          ]
+        },
+        "model_choice": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "model_class": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "parameters": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "outputs": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "wordset": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "batch_size": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "lr": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "momentum": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "weight_decay": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "img_classes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "wrd_classes": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "train_images": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "val_images": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "device_name": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "gpus_used": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "units_total": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "lesioned_units": {
+          "type": "array",
+          "maxItems": 4096,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "word_channel": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "first",
+                "last"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "first": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "last": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "reset_outgoing": {
+          "type": "boolean"
+        },
+        "silent_epochs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "selectivity_threshold": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "selectivity_images": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "selectivity_words": {
+          "$ref": "#/$defs/nullableInteger"
+        }
+      }
+    },
+    "lesionProgress": {
+      "type": "object",
+      "required": [
+        "epochs_first",
+        "epochs_total",
+        "epochs_completed",
+        "epoch",
+        "phase",
+        "batch",
+        "batches",
+        "fraction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "epochs_first": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "epochs_total": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "epochs_completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "epoch": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "phase": {
+          "enum": [
+            "intact_validation",
+            "intact_selectivity",
+            "initial_validation",
+            "initial_selectivity",
+            "training",
+            "validation",
+            "selectivity",
+            null
+          ]
+        },
+        "batch": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "batches": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "fraction": {
+          "$ref": "#/$defs/fraction"
+        }
+      }
+    },
+    "lesionValidation": {
+      "type": "object",
+      "required": [
+        "val_loss",
+        "val_loss_images",
+        "val_loss_words",
+        "val_accuracy_images",
+        "val_accuracy_words",
+        "duration_seconds",
+        "finished_at",
+        "mean_word_activation_lesioned",
+        "mean_word_activation_other",
+        "word_selective_lesioned",
+        "word_selective_other"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "val_loss": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_images": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_words": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_accuracy_images": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "val_accuracy_words": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "duration_seconds": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "finished_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "mean_word_activation_lesioned": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "mean_word_activation_other": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "word_selective_lesioned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "word_selective_other": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "lesionInitialValidation": {
+      "type": "object",
+      "required": [
+        "intact",
+        "lesioned"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "intact": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/lesionValidation"
+            }
+          ]
+        },
+        "lesioned": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/lesionValidation"
+            }
+          ]
+        }
+      }
+    },
+    "lesionEpoch": {
+      "type": "object",
+      "required": [
+        "epoch",
+        "lr",
+        "train_loss",
+        "train_loss_images",
+        "train_loss_words",
+        "train_accuracy_images",
+        "train_accuracy_words",
+        "val_loss",
+        "val_loss_images",
+        "val_loss_words",
+        "val_accuracy_images",
+        "val_accuracy_words",
+        "duration_seconds",
+        "finished_at",
+        "mean_word_activation_lesioned",
+        "mean_word_activation_other",
+        "word_selective_lesioned",
+        "word_selective_other"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "epoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lr": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_loss": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_loss_images": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_loss_words": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "train_accuracy_images": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "train_accuracy_words": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "val_loss": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_images": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_loss_words": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "val_accuracy_images": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "val_accuracy_words": {
+          "$ref": "#/$defs/nullablePercent"
+        },
+        "duration_seconds": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "finished_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "mean_word_activation_lesioned": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "mean_word_activation_other": {
+          "$ref": "#/$defs/nullableNumber"
+        },
+        "word_selective_lesioned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "word_selective_other": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "wordsetConfig": {
+      "type": "object",
+      "required": [
+        "wordlist",
+        "num_words",
+        "num_train",
+        "num_val",
+        "train_fonts",
+        "val_fonts",
+        "width",
+        "height"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "wordlist": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "num_words": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "num_train": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "num_val": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "train_fonts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "val_fonts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "width": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "height": {
+          "$ref": "#/$defs/nullableInteger"
+        }
+      }
+    },
+    "wordsetProgress": {
+      "type": "object",
+      "required": [
+        "words_done",
+        "words_total",
+        "fraction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "words_done": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "words_total": {
+          "$ref": "#/$defs/nullableInteger"
+        },
+        "fraction": {
+          "$ref": "#/$defs/fraction"
+        }
+      }
+    }
+  }
+}

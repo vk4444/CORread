@@ -1,0 +1,20 @@
+# CORread configuration. Copy to paths.toml next to your scripts (or point CORREAD_PATHS to it).
+# Relative paths are relative to this file; absolute paths are fine (e.g. ImageNet on another drive).
+
+fonts     = "data/fonts"         # <name>.ttf
+wordlists = "data/wordlists"     # <name>.txt, one word per line
+imagesets = "data/imagenet"      # ImageNet-style train/<class>/ and val/<class>/ (see corread.prepare_imagenet)
+wordsets  = "data/wordsets"      # generated word sets
+models    = "models"             # trained models
+
+# Optional: sharing through a Hugging Face organisation of your own (docs/hub.md).
+# Sign in with `hf auth login` or set HF_TOKEN; the token never goes in this file.
+# [hub]
+# org = "my-lab"     # an organisation, or your user name
+# private = true     # visibility of the repos created from here on
+
+# Optional: live status reports to a web API of your own (docs/reporting.md).
+# The token goes in the CORREAD_REPORT_TOKEN environment variable, never in this file.
+# [report]
+# url = "https://example.org/api/runs"   # https:// required (http:// only for localhost)
+# every = 60                              # seconds between progress reports

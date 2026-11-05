@@ -1,0 +1,27 @@
+CORread
+Copyright (C) 2026 Vojtěch Kubala
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the License,
+or (at your option) any later version. It is distributed WITHOUT ANY WARRANTY; see LICENSE.
+
+CORread derives from the following GPL-3.0 software. Each derived file says so in its header, with the
+date and nature of the modifications.
+
+1. CORnet
+   https://github.com/dicarlolab/CORnet
+   Copyright (C) 2018-2019 Jonas Kubilius and the DiCarlo Lab, MIT. GNU GPL v3 or later.
+   Used in: src/corread/models/layers.py (CORBlockZ, CORBlockS, the CORnet-S V1 block, Flatten,
+   Identity), src/corread/models/cornet_z.py, src/corread/models/cornet_s.py.
+
+2. Origins-of-VWFA
+   https://github.com/THANNAGA/Origins-of-VWFA
+   Copyright (C) 2021 Théo Hannagan, Aakash Agrawal, Laurent Cohen, Stanislas Dehaene. GNU GPL v3 or later.
+   The literacy training paradigm, the biased and unbiased readouts, and the training code.
+   Used in: src/corread/models/layers.py (BiLinear), src/corread/models/base.py,
+   src/corread/training/instance.py, src/corread/training/data.py.
+
+3. Dr. Olga Solaja's adaptation of Origins-of-VWFA, from which this library was developed.
+
+The test font in tests/data/fonts/ is DejaVu Sans (https://dejavu-fonts.github.io), under the license in
+tests/data/fonts/LICENSE (Bitstream Vera Fonts copyright; DejaVu changes are in the public domain).

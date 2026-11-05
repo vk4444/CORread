@@ -1,0 +1,106 @@
+cff-version: 1.2.0
+message: "If you use CORread, please cite it as below, together with the work it builds on (see references)."
+title: "CORread: training CORnet models of the ventral visual stream to read"
+type: software
+authors:
+  - family-names: Kubala
+    given-names: Vojtěch
+version: 0.1.0
+license: GPL-3.0-or-later
+repository-code: "https://github.com/vk4444/CORread"
+url: "https://vk4444.github.io/CORread"
+abstract: >-
+  CORread is a Python library for training CORnet models of the primate ventral visual stream to read,
+  after Hannagan et al. (2021). It generates byte-reproducible word stimuli, trains pre-literate,
+  illiterate and literate CORnet-Z and CORnet-S networks with full provenance, measures the word
+  selectivity of their dense-layer units, and lesions word-selective units to study the recovery of reading.
+keywords:
+  - CORnet
+  - reading
+  - visual word form area
+  - neuronal recycling
+  - computational neuroscience
+  - deep learning
+references:
+  - type: article
+    title: "Emergence of a compositional neural code for written words: Recycling of a convolutional neural network for reading"
+    authors:
+      - family-names: Hannagan
+        given-names: Théo
+      - family-names: Agrawal
+        given-names: Aakash
+      - family-names: Cohen
+        given-names: Laurent
+      - family-names: Dehaene
+        given-names: Stanislas
+    journal: "Proceedings of the National Academy of Sciences"
+    volume: 118
+    issue: 46
+    start: e2104779118
+    year: 2021
+    doi: 10.1073/pnas.2104779118
+  - type: article
+    title: "CORnet: Modeling the Neural Mechanisms of Core Object Recognition"
+    authors:
+      - family-names: Kubilius
+        given-names: Jonas
+      - family-names: Schrimpf
+        given-names: Martin
+      - family-names: Nayebi
+        given-names: Aran
+      - family-names: Bear
+        given-names: Daniel
+      - family-names: Yamins
+        given-names: Daniel L. K.
+      - family-names: DiCarlo
+        given-names: James J.
+    journal: bioRxiv
+    year: 2018
+    doi: 10.1101/408385
+  - type: conference-paper
+    title: "Brain-Like Object Recognition with High-Performing Shallow Recurrent ANNs"
+    authors:
+      - family-names: Kubilius
+        given-names: Jonas
+      - family-names: Schrimpf
+        given-names: Martin
+      - family-names: Kar
+        given-names: Kohitij
+      - family-names: Hong
+        given-names: Ha
+      - family-names: Majaj
+        given-names: Najib J.
+      - family-names: Rajalingham
+        given-names: Rishi
+      - family-names: Issa
+        given-names: Elias B.
+      - family-names: Bashivan
+        given-names: Pouya
+      - family-names: Prescott-Roy
+        given-names: Jonathan
+      - family-names: Schmidt
+        given-names: Kailyn
+      - family-names: Nayebi
+        given-names: Aran
+      - family-names: Bear
+        given-names: Daniel
+      - family-names: Yamins
+        given-names: Daniel L. K.
+      - family-names: DiCarlo
+        given-names: James J.
+    collection-title: "Advances in Neural Information Processing Systems 32 (NeurIPS 2019)"
+    year: 2019
+    url: "https://arxiv.org/abs/1909.06161"
+  - type: software
+    title: "CORnet"
+    authors:
+      - name: "DiCarlo Lab, MIT"
+    repository-code: "https://github.com/dicarlolab/CORnet"
+    license: GPL-3.0-or-later
+  - type: software
+    title: "Origins-of-VWFA"
+    authors:
+      - family-names: Hannagan
+        given-names: Théo
+    repository-code: "https://github.com/THANNAGA/Origins-of-VWFA"
+    license: GPL-3.0-or-later
